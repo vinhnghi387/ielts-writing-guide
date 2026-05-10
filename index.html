@@ -3,152 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IELTS Writing Task 2 - AI Assisted Guide</title>
+    <title>IELTS Writing AI Interactive Lab</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --ai-box: #e8f4fd;
+            --primary: #2c3e50; --accent: #3498db; --bg: #f4f7f6;
         }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        /* Input Section */
+        .input-section { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        textarea { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 10px; }
+        button { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; margin: 0; background-color: var(--bg-color); color: var(--primary-color); }
-        header { background: var(--primary-color); color: white; padding: 2.5rem 0; text-align: center; }
-        .container { max-width: 1100px; margin: 2rem auto; padding: 0 20px; }
+        /* Practice Area */
+        .practice-step { background: #fff9f0; border-left: 5px solid #ff9800; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .suggestion { font-size: 0.9rem; color: #666; background: #e1f5fe; padding: 8px; border-radius: 4px; margin-top: 10px; }
+        .collocation { color: #d32f2f; font-weight: bold; }
         
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-top: 6px solid var(--accent-color); }
-        
-        h2 { color: var(--accent-color); font-size: 1.5rem; margin-top: 0; display: flex; justify-content: space-between; }
-        .prompt-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 15px 0; font-style: italic; font-size: 0.9rem; }
-        
-        h3 { font-size: 1.2rem; color: #e67e22; margin-top: 20px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
-        .topic-info { margin-bottom: 20px; }
-        
-        .idea-tag { display: inline-block; background: #e1f5fe; color: #0288d1; padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; margin-bottom: 8px; }
-        
-        /* AI Outline Section */
-        .ai-outline { background: var(--ai-box); padding: 15px; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid #bbdefb; }
-        .ai-outline ul { padding-left: 20px; margin: 5px 0; }
-        .btn-ai { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
-        .btn-ai:hover { background: #2980b9; transform: scale(1.05); }
-
-        footer { text-align: center; padding: 3rem; color: #7f8c8d; }
+        .feedback-area { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 15px; border-radius: 8px; margin-top: 20px; display: none; }
+        .improved-ver { color: #2e7d32; font-weight: bold; font-style: italic; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>IELTS Writing Task 2 Repository</h1>
-    <p>Kho lưu trữ đề bài và dàn ý chi tiết hỗ trợ bởi AI</p>
+    <h1>IELTS Writing AI Interactive Lab</h1>
+    <p>Nhập đề - Lập ý - Viết câu - Sửa lỗi</p>
 </header>
 
 <div class="container">
-    <div class="category-grid">
+    <div class="input-section">
+        <h3>1. Nhập đề bài của bạn vào đây:</h3>
+        <textarea id="userTopic" rows="3" placeholder="Ví dụ: Some people think that robots will replace humans in the future..."></textarea>
+        <button onclick="generateAI()">Phân tích & Gợi ý ý tưởng (AI)</button>
+    </div>
+
+    <div id="aiAnalysis" style="display:none; margin-bottom: 30px;">
+        <h4 style="color: #2c3e50;">💡 Gợi ý hướng đi từ AI:</h4>
+        <div id="aiIdeas" class="practice-step"></div>
+    </div>
+
+    <div id="writingLab" style="display:none;">
+        <h3>2. Thực hành viết câu (Translating & Improving)</h3>
         
-        <div class="card">
-            <h2>1. Opinion <button class="btn-ai" onclick="toggleAI('ai1')">✨ AI Outline</button></h2>
-            <div class="prompt-box">
-                <b>Đề bài mẫu:</b> Some people believe that technological developments lead to the loss of traditional cultures. To what extent do you agree or disagree?
+        <div class="practice-step">
+            <p><b>Câu tiếng Việt gợi ý:</b> "Việc áp dụng công nghệ vào giáo dục mang lại nhiều lợi ích đáng kể cho học sinh."</p>
+            <div class="suggestion">
+                📌 <b>Gợi ý cụm từ:</b> 
+                <span class="collocation">The integration of technology</span> (Sự tích hợp công nghệ), 
+                <span class="collocation">offer immense benefits</span> (mang lại lợi ích lớn), 
+                <span class="collocation">academic performance</span> (kết quả học tập).
             </div>
-            
-            <div class="topic-info">
-                <span class="idea-tag">Chủ đề: Technology</span>
-                <p><b>Ý tưởng:</b> Sự bùng nổ của Internet khiến giới trẻ ưa chuộng văn hóa toàn cầu hơn là các giá trị truyền thống địa phương.</p>
-            </div>
-
-            <div id="ai1" class="ai-outline">
-                <strong>Dàn ý gợi ý từ AI:</strong>
-                <ul>
-                    <li><b>Intro:</b> Paraphrase đề bài + Khẳng định đồng ý một phần.</li>
-                    <li><b>Body 1:</b> Công nghệ bảo tồn văn hóa (số hóa bảo tàng, học lịch sử qua VR).</li>
-                    <li><b>Body 2:</b> Công nghệ làm lu mờ văn hóa (mạng xã hội truyền bá lối sống phương Tây, giới trẻ bỏ quên lễ hội truyền thống).</li>
-                    <li><b>Conclusion:</b> Tổng kết lại quan điểm.</li>
-                </ul>
+            <textarea placeholder="Viết câu tiếng Anh của bạn vào đây..." style="margin-top:10px;"></textarea>
+            <button onclick="showFeedback('fb1')">Kiểm tra & Nâng cấp câu</button>
+            <div id="fb1" class="feedback-area">
+                <b>Nhận xét:</b> Câu của bạn khá tốt nhưng có thể dùng cấu trúc nhấn mạnh hơn.<br>
+                <b>Câu hay hơn:</b> <span class="improved-ver">"The integration of technology into classrooms has been proven to offer immense benefits to students' academic performance."</span>
             </div>
         </div>
 
-        <div class="card">
-            <h2>2. Discussion <button class="btn-ai" onclick="toggleAI('ai2')">✨ AI Outline</button></h2>
-            <div class="prompt-box">
-                <b>Đề bài mẫu:</b> Some people think that it is best to work for the same organization for the whole life. Others think that it is better to change jobs frequently. Discuss both views and give your opinion.
+        <div class="practice-step">
+            <p><b>Câu tiếng Việt gợi ý:</b> "Tuy nhiên, việc quá phụ thuộc vào máy tính có thể làm giảm khả năng tư duy sáng tạo."</p>
+            <div class="suggestion">
+                📌 <b>Gợi ý cụm từ:</b> 
+                <span class="collocation">Over-reliance on</span> (Quá phụ thuộc vào), 
+                <span class="collocation">stifle creativity</span> (làm thui chột sự sáng tạo), 
+                <span class="collocation">critical thinking skills</span> (kỹ năng tư duy phản biện).
             </div>
-
-            <div class="topic-info">
-                <span class="idea-tag">Chủ đề: Education & Work</span>
-                <p><b>Ý tưởng:</b> Nhảy việc giúp tích lũy kỹ năng đa dạng, trong khi làm một nơi đảm bảo sự ổn định tài chính.</p>
-            </div>
-
-            <div id="ai2" class="ai-outline">
-                <strong>Dàn ý gợi ý từ AI:</strong>
-                <ul>
-                    <li><b>Body 1:</b> Lợi ích của sự trung thành (lương hưu, thăng tiến nội bộ, hiểu rõ văn hóa công ty).</li>
-                    <li><b>Body 2:</b> Lợi ích của thay đổi việc làm (mở rộng mối quan hệ, tăng lương nhanh hơn, học hỏi công nghệ mới).</li>
-                    <li><b>Opinion:</b> Nên thay đổi việc làm khi còn trẻ để trải nghiệm.</li>
-                </ul>
+            <textarea placeholder="Viết câu tiếng Anh của bạn vào đây..." style="margin-top:10px;"></textarea>
+            <button onclick="showFeedback('fb2')">Kiểm tra & Nâng cấp câu</button>
+            <div id="fb2" class="feedback-area">
+                <b>Nhận xét:</b> Dùng từ "stifle" sẽ giúp bài viết mang tính học thuật cao hơn.<br>
+                <b>Câu hay hơn:</b> <span class="improved-ver">"However, an over-reliance on computers might inadvertently stifle students' creativity and critical thinking skills."</span>
             </div>
         </div>
-
-        <div class="card">
-            <h2>3. Problem & Solution <button class="btn-ai" onclick="toggleAI('ai3')">✨ AI Outline</button></h2>
-            <div class="prompt-box">
-                <b>Đề bài mẫu:</b> Many cities today are suffering from severe environmental pollution. What are the causes and what solutions can be implemented?
-            </div>
-
-            <div class="topic-info">
-                <span class="idea-tag">Chủ đề: Environment</span>
-                <p><b>Ý tưởng:</b> Khí thải từ phương tiện cá nhân là nguyên nhân chính; Giải pháp là nâng cấp giao thông công cộng.</p>
-            </div>
-
-            <div id="ai3" class="ai-outline">
-                <strong>Dàn ý gợi ý từ AI:</strong>
-                <ul>
-                    <li><b>Problems:</b> Khí thải công nghiệp và mật độ xe cộ quá cao gây ô nhiễm không khí.</li>
-                    <li><b>Solutions 1:</b> Chính phủ áp thuế xanh (Green tax) lên các nhà máy thải nhiều khí độc.</li>
-                    <li><b>Solutions 2:</b> Khuyến khích sử dụng xe điện và năng lượng tái tạo.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>4. Adv & Disadv <button class="btn-ai" onclick="toggleAI('ai4')">✨ AI Outline</button></h2>
-            <div class="prompt-box">
-                <b>Đề bài mẫu:</b> In many countries, more and more people are moving to cities. Do the advantages of this trend outweigh the disadvantages?
-            </div>
-
-            <div class="topic-info">
-                <span class="idea-tag">Chủ đề: Crime & Society</span>
-                <p><b>Ý tưởng:</b> Đô thị hóa tạo ra việc làm nhưng cũng dẫn đến tỷ lệ tội phạm tăng cao do chênh lệch giàu nghèo.</p>
-            </div>
-
-            <div id="ai4" class="ai-outline">
-                <strong>Dàn ý gợi ý từ AI:</strong>
-                <ul>
-                    <li><b>Advantages:</b> Cơ hội việc làm tốt, tiếp cận y tế và giáo dục chất lượng cao.</li>
-                    <li><b>Disadvantages:</b> Chi phí sinh hoạt đắt đỏ, áp lực lên hạ tầng và tệ nạn xã hội.</li>
-                    <li><b>Conclusion:</b> Lợi ích vượt trội nếu chính phủ quản lý tốt dân cư.</li>
-                </ul>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <script>
-    function toggleAI(id) {
-        var x = document.getElementById(id);
-        if (x.style.display === "none" || x.style.display === "") {
-            x.style.display = "block";
-        } else {
-            x.style.display = "none";
-        }
+    function generateAI() {
+        const topic = document.getElementById('userTopic').value;
+        if(topic.trim() === "") { alert("Vui lòng nhập đề bài!"); return; }
+        
+        document.getElementById('aiAnalysis').style.display = "block";
+        document.getElementById('writingLab').style.display = "block";
+        
+        // Giả lập AI phân tích ý
+        document.getElementById('aiIdeas').innerHTML = `
+            <b>Phân tích đề:</b> Đây là dạng Opinion. <br>
+            <b>Ý chính 1:</b> Công nghệ tăng hiệu suất học tập (Efficiency). <br>
+            <b>Ý chính 2:</b> Nguy cơ mất tương tác xã hội (Isolation).
+        `;
+    }
+
+    function showFeedback(id) {
+        document.getElementById(id).style.display = "block";
     }
 </script>
-
-<footer>
-    <p>© 2026 IELTS Writing Teacher Assistant - Design for Students</p>
-</footer>
 
 </body>
 </html>
